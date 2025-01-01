@@ -64,18 +64,19 @@ const loginUser = async (req, res) => {
         id: checkUser._id,
         email: checkUser.email,
         role: checkUser.role,
+        userName: checkUser.userName,
       },
       process.env.JWT_SECRET,
       { expiresIn: "60m" }
     );
 
-    // save token as a cookie
+    // add token cookie in server response, so that client's browser can store it in cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
     });
 
-    // send final response
+    // send final response {jwt token included in cookie server response}
     res.json({
       message: "User has been logged in successfully",
       success: true,
@@ -83,6 +84,7 @@ const loginUser = async (req, res) => {
         id: checkUser._id,
         email: checkUser.email,
         role: checkUser.role,
+        userName: checkUser.userName,
       },
     });
   } catch (error) {
@@ -105,6 +107,8 @@ const logoutUser = (req, res) => {
 
 // auth middleware
 const authMiddleware = async (req, res, next) => {
+  // check if token is present in cookie
+  // get token from cookie on request
   const token = req.cookies.token;
   if (!token)
     return res.status(401).json({ message: "Unauthorized", success: false });
@@ -114,7 +118,6 @@ const authMiddleware = async (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    console.log(error);
     res.status(401).json({ message: "Unauthorized", success: false });
   }
 };

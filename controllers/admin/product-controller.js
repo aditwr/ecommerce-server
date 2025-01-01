@@ -75,7 +75,10 @@ const editProduct = async (req, res) => {
     findProduct.category = formData.category || findProduct.category;
     findProduct.brand = formData.brand || findProduct.brand;
     findProduct.price = formData.price || findProduct.price;
-    findProduct.salePrice = formData.salePrice || findProduct.salePrice;
+    findProduct.salePrice =
+      formData.salePrice === ""
+        ? null
+        : formData.salePrice || findProduct.salePrice;
     findProduct.totalStock = formData.totalStock || findProduct.totalStock;
 
     const updatedProduct = await findProduct.save();
@@ -94,22 +97,16 @@ const editProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const findProduct = await ProductModel.findById(id);
-    if (!findProduct) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-
-    await findProduct.remove();
+    await ProductModel.findByIdAndDelete(id);
     res.status(200).json({
       success: true,
       message: "Product deleted successfully",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res
+      .status(500)
+      .json({ success: false, message: "Internal server error", error: error });
   }
 };
 

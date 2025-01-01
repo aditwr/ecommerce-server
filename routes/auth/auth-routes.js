@@ -8,6 +8,8 @@ const {
 
 const router = express.Router();
 
+// prefix is /api/auth
+
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
