@@ -11,5 +11,6 @@ const router = express.Router();
 // Prefix : /api/shop/cart
 router.post("/add", addProductToCart);
 router.get("/:userId", getCartOfSpecificUser);
+router.post("/increase", increaseCartProductQuantity);
 
 module.exports = router;

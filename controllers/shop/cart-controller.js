@@ -81,13 +81,11 @@ const getCartOfSpecificUser = async (req, res) => {
       await userCart.save();
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        data: userCart,
-        message: "Cart data for user is fetched",
-      });
+    res.status(200).json({
+      success: true,
+      data: userCart,
+      message: "Cart data for user is fetched",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message, success: false });
@@ -108,7 +106,7 @@ const increaseCartProductQuantity = async (req, res) => {
     if (!cartOfSpesificUser)
       return res
         .status(404)
-        .json({ message: "Cart not found", success: false });
+        .json({ message: "User shopping cart data not found", success: false });
 
     const productIndex = cartOfSpesificUser.products.findIndex(
       (product) => product.productId === productId
@@ -117,7 +115,10 @@ const increaseCartProductQuantity = async (req, res) => {
     if (productIndex === -1)
       return res
         .status(404)
-        .json({ message: "Product not found in cart", success: false });
+        .json({
+          message: "Product not found in user shopping cart",
+          success: false,
+        });
 
     cartOfSpesificUser.products[productIndex].quantity += quantity;
     await cartOfSpesificUser.save();
