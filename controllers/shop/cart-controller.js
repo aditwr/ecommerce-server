@@ -26,6 +26,13 @@ const addProductToCart = async (req, res) => {
         products: [{ productId, quantity }], // add the first product to array of products
       });
       await newUserCart.save();
+      newUserCart.populate("products.productId");
+
+      res.status(200).json({
+        message: "Product added to cart",
+        success: true,
+        data: newUserCart,
+      });
     } else {
       //   if the cart exists, check if the product already exists in the cart
       const productIndex = userCart.products.findIndex(
@@ -41,13 +48,14 @@ const addProductToCart = async (req, res) => {
         userCart.products.push({ productId, quantity });
         await userCart.save();
       }
-    }
 
-    res.status(200).json({
-      message: "Product added to cart",
-      success: true,
-      data: userCart,
-    });
+      userCart.populate("products.productId");
+      res.status(200).json({
+        message: "Product added to cart",
+        success: true,
+        data: userCart,
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message, success: false });
@@ -109,18 +117,17 @@ const increaseCartProductQuantity = async (req, res) => {
         .json({ message: "User shopping cart data not found", success: false });
 
     const productIndex = cartOfSpesificUser.products.findIndex(
-      (product) => product.productId === productId
+      (product) => product.productId == productId
     );
 
     if (productIndex === -1)
-      return res
-        .status(404)
-        .json({
-          message: "Product not found in user shopping cart",
-          success: false,
-        });
+      return res.status(404).json({
+        message: "Product not found in user shopping cart",
+        success: false,
+      });
 
     cartOfSpesificUser.products[productIndex].quantity += quantity;
+    cartOfSpesificUser.populate("products.productId");
     await cartOfSpesificUser.save();
 
     res.status(200).json({ success: true, data: cartOfSpesificUser });
@@ -144,29 +151,25 @@ const decreaseCartProductQuantity = async (req, res) => {
     if (!cartOfSpesificUser)
       return res
         .status(404)
-        .json({ message: "Cart not found", success: false });
+        .json({ message: "User shopping cart data not found", success: false });
 
     const productIndex = cartOfSpesificUser.products.findIndex(
-      (product) => product.productId === productId
+      (product) => product.productId == productId
     );
 
     if (productIndex === -1)
-      return res
-        .status(404)
-        .json({ message: "Product not found in cart", success: false });
+      return res.status(404).json({
+        message: "Product not found in user shopping cart",
+        success: false,
+      });
 
-    if (cartOfSpesificUser.products[productIndex].quantity - quantity <= 0) {
-      cartOfSpesificUser.products = cartOfSpesificUser.products.filter(
-        (product) => product.productId !== productId
-      );
-    } else {
-      cartOfSpesificUser.products[productIndex].quantity -= quantity;
-    }
-
+    cartOfSpesificUser.products[productIndex].quantity -= quantity;
+    cartOfSpesificUser.populate("products.productId");
     await cartOfSpesificUser.save();
 
     res.status(200).json({ success: true, data: cartOfSpesificUser });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message, success: false });
   }
 };
@@ -185,15 +188,23 @@ const removeProductFromCart = async (req, res) => {
     if (!cartOfSpesificUser)
       return res
         .status(404)
-        .json({ message: "Cart not found", success: false });
+        .json({ message: "User shopping cart data not found", success: false });
+
+    console.log("before remove : ", cartOfSpesificUser);
 
     cartOfSpesificUser.products = cartOfSpesificUser.products.filter(
-      (product) => product.productId !== productId
+      (product) => product.productId != productId
     );
 
     await cartOfSpesificUser.save();
 
-    res.status(200).json({ success: true, data: cartOfSpesificUser });
+    console.log("after remove : ", cartOfSpesificUser);
+
+    res.status(200).json({
+      success: true,
+      data: cartOfSpesificUser,
+      message: "Product removed from cart",
+    });
   } catch (error) {
     res.status(500).json({ message: error.message, success: false });
   }

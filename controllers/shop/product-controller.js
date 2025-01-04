@@ -2,7 +2,7 @@ const ProductModel = require("../../models/Product");
 
 const getFilteredProducts = async (req, res) => {
   try {
-    const { category, brand, sort } = req.query;
+    const { category, brand, sort, page = 1, limit = 5 } = req.query;
     let filters = {};
     let sortCriteria = {};
     if (category) filters.category = { $in: category.split(",") };
@@ -32,8 +32,16 @@ const getFilteredProducts = async (req, res) => {
         sortCriteria.createdAt = -1; // default to newest
     }
 
-    const products = await ProductModel.find(filters).sort(sortCriteria);
-    res.status(200).json({ products, success: true });
+    const skip = (page - 1) * limit;
+
+    const products = await ProductModel.find(filters)
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalProducts = await ProductModel.countDocuments(filters);
+
+    res.status(200).json({ success: true, products, totalProducts });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message, success: false });

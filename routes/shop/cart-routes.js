@@ -12,5 +12,7 @@ const router = express.Router();
 router.post("/add", addProductToCart);
 router.get("/:userId", getCartOfSpecificUser);
 router.post("/increase", increaseCartProductQuantity);
+router.post("/decrease", decreaseCartProductQuantity);
+router.post("/remove", removeProductFromCart);
 
 module.exports = router;
