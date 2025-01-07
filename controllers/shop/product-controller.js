@@ -2,7 +2,14 @@ const ProductModel = require("../../models/Product");
 
 const getFilteredProducts = async (req, res) => {
   try {
-    const { category, brand, sort, page = 1, limit = 5 } = req.query;
+    const {
+      category,
+      brand,
+      sort,
+      page = 1,
+      limit = 5,
+      customFilters,
+    } = req.query;
     let filters = {};
     let sortCriteria = {};
     if (category) filters.category = { $in: category.split(",") };
@@ -39,6 +46,7 @@ const getFilteredProducts = async (req, res) => {
       .skip(skip)
       .limit(parseInt(limit));
 
+    // total products is needed for pagination data on the frontend
     const totalProducts = await ProductModel.countDocuments(filters);
 
     res.status(200).json({ success: true, products, totalProducts });

@@ -43,11 +43,16 @@ const addProduct = async (req, res) => {
 // route : [GET] (domain)/api/admin/products/get
 const fetchAllProducts = async (req, res) => {
   try {
-    const listOfProducts = await ProductModel.find({});
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (page - 1) * limit;
+
+    const listOfProducts = await ProductModel.find({}).skip(skip).limit(limit);
+    const countDocuments = await ProductModel.countDocuments({});
     res.status(200).json({
       success: true,
-      message: "All products fetched successfully",
+      message: "Products fetched successfully",
       data: listOfProducts,
+      totalDocuments: countDocuments,
     });
   } catch (error) {
     console.log(error);
