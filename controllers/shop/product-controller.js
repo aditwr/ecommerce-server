@@ -2,18 +2,12 @@ const ProductModel = require("../../models/Product");
 
 const getFilteredProducts = async (req, res) => {
   try {
-    const {
-      category,
-      brand,
-      sort,
-      page = 1,
-      limit = 5,
-      customFilters,
-    } = req.query;
+    const { category, brand, sort, page = 1, limit = 5, search } = req.query;
     let filters = {};
     let sortCriteria = {};
     if (category) filters.category = { $in: category.split(",") };
     if (brand) filters.brand = { $in: brand.split(",") };
+    if (search) filters.title = { $regex: search, $options: "i" }; // case-insensitive search
 
     // Determine sort criteria
     switch (sort) {
