@@ -6,6 +6,8 @@ const authRouter = require("./routes/auth/auth-routes");
 const adminProductRouter = require("./routes/admin/products-routes");
 const shopProductRouter = require("./routes/shop/products-routes");
 const cartRouter = require("./routes/shop/cart-routes");
+const addressRouter = require("./routes/shop/address-routes");
+const accountRouter = require("./routes/account/account-routes");
 const { authMiddleware } = require("./controllers/auth/auth-controller");
 require("dotenv").config();
 
@@ -25,11 +27,10 @@ const corsOptions = {
   allowedHeaders: "Content-Type, Authorization, Cache-Control, EXpires, Pragma",
   credentials: true,
 };
-app.use(cors(corsOptions));
-
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions)); // to allow cross origin requests
+app.use(cookieParser()); // to parse cookies so that we can access them in the request object
+app.use(express.json()); // to parse json data in the request body
+app.use(express.urlencoded({ extended: true })); // to parse url encoded data in the request body
 
 // middleware
 
@@ -38,6 +39,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductRouter);
 app.use("/api/shop/products", shopProductRouter);
 app.use("/api/shop/cart", cartRouter);
+app.use("/api/shop/address", addressRouter);
+app.use("/api/account", authMiddleware, accountRouter);
 
 app.listen(5000, () => {
   console.log("Server is running on port " + 5000);

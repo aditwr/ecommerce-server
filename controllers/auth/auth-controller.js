@@ -1,14 +1,16 @@
+require("dotenv").config();
 const bycript = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
-require("dotenv").config();
+const CryptoJS = require("crypto-js");
+
+const DATA_ENCRYPTION_KEY = process.env.DATA_ENCRYPTION_KEY;
 
 // AUTH CONTROLLERS (middleware)
 // register
 const registerUser = async (req, res) => {
-  const { userName, email, password } = req.body;
-
   try {
+    const { userName, email, password } = req.body;
     const checkEmail = await User.findOne({ email: email });
     if (checkEmail)
       return res
@@ -39,10 +41,20 @@ const registerUser = async (req, res) => {
 
 // login
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    const checkUser = await User.findOne({ email });
+    const { email, password } = req.body;
+
+    // Decrypt the email and password
+    const decryptedEmail = CryptoJS.AES.decrypt(
+      email,
+      DATA_ENCRYPTION_KEY
+    ).toString(CryptoJS.enc.Utf8);
+    const decryptedPassword = CryptoJS.AES.decrypt(
+      password,
+      DATA_ENCRYPTION_KEY
+    ).toString(CryptoJS.enc.Utf8);
+
+    const checkUser = await User.findOne({ email: decryptedEmail });
     // check email
     if (!checkUser)
       return res.json({
@@ -51,7 +63,10 @@ const loginUser = async (req, res) => {
       });
 
     // check password
-    const checkPassword = await bycript.compare(password, checkUser.password);
+    const checkPassword = await bycript.compare(
+      decryptedPassword,
+      checkUser.password
+    );
     if (!checkPassword)
       return res.json({
         message: "Password is incorrect",
