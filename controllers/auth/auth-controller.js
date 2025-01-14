@@ -22,6 +22,7 @@ const registerUser = async (req, res) => {
       userName,
       email,
       password: hashPassowrd,
+      role: "user",
     });
 
     await newUser.save();
@@ -122,18 +123,19 @@ const logoutUser = (req, res) => {
 
 // auth middleware
 const authMiddleware = async (req, res, next) => {
-  // check if token is present in cookie
-  // get token from cookie on request
-  const token = req.cookies.token;
-  if (!token)
-    return res.status(401).json({ message: "Unauthorized", success: false });
-
   try {
+    // check if token is present in cookie
+    // get token from cookie on request
+    const token = req.cookies.token;
+    if (!token)
+      return res.status(401).json({ message: "Unauthorized", success: false });
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Unauthorized", success: false });
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
   }
 };
 

@@ -11,13 +11,12 @@ const createAddress = async (req, res) => {
       phoneNumber,
       deliveryInstructions,
     } = req.body;
-    const { userId } = req.params;
+    const userId = req.user.id;
 
     if (!address || !city || !postalCode || !country || !phoneNumber) {
       return res.status(400).json({
         success: false,
         message: "Please fill in all required fields.",
-        data: null,
       });
     }
 
@@ -26,7 +25,16 @@ const createAddress = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "User not found.",
-        data: null,
+      });
+    }
+
+    const countAddressesOwnedByUser = await AddressModel.countDocuments({
+      user: userId,
+    });
+    if (countAddressesOwnedByUser >= 5) {
+      return res.status(400).json({
+        success: false,
+        message: "You can only have up to 5 addresses.",
       });
     }
 
@@ -44,7 +52,6 @@ const createAddress = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Address created successfully.",
-      data: newAddress,
     });
   } catch (error) {
     console.log("(address-controller) createAddress error: ", error.message);
@@ -56,14 +63,13 @@ const createAddress = async (req, res) => {
 
 const getAddresses = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user.id;
 
     const userExists = await UserModel.findById(userId);
     if (!userExists) {
       return res.status(404).json({
         success: false,
         message: "User not found.",
-        data: null,
       });
     }
 
@@ -138,7 +144,8 @@ const updateAddress = async (req, res) => {
 
 const deleteAddress = async (req, res) => {
   try {
-    const { userId, addressId } = req.params;
+    const { addressId } = req.params;
+    const userId = req.user.id;
 
     //   check if the user is the owner of the address
     const addressOwnedByUser = await AddressModel.findOne({
@@ -149,7 +156,6 @@ const deleteAddress = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Address not found.",
-        data: null,
       });
     }
 
@@ -158,13 +164,10 @@ const deleteAddress = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Address deleted successfully.",
-      data: null,
     });
   } catch (error) {
     console.log("(address-controller) deleteAddress error: ", error.message);
-    res
-      .status(500)
-      .json({ message: error.message, success: false, error: error });
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
