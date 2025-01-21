@@ -2,6 +2,7 @@ require("dotenv").config();
 const paypal = require("../../helpers/paypal");
 const OrderModel = require("../../models/Order");
 const CartModel = require("../../models/Cart");
+const { get } = require("mongoose");
 
 const createOrder = async (req, res) => {
   try {
@@ -176,4 +177,19 @@ async function capturePayment(req, res) {
   }
 }
 
-module.exports = { createOrder, capturePayment };
+async function getOrdersByUserId(req, res) {
+  try {
+    const { userId } = req.params;
+    const orders = await OrderModel.find({ user: userId }).populate("user");
+    return res.status(200).json({
+      success: true,
+      message: "Orders fetched successfully",
+      data: orders,
+    });
+  } catch (error) {
+    console.log("Error in getOrdersByUserId", error);
+    res.status(500).json({ message: "Internal server error", succeess: false });
+  }
+}
+
+module.exports = { createOrder, capturePayment, getOrdersByUserId };

@@ -14,10 +14,12 @@ const orderSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   cart: {
     type: Schema.Types.ObjectId,
     ref: "Cart",
+    required: true,
   },
   address: {
     address: { type: String, required: true },
