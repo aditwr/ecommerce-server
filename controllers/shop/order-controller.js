@@ -180,11 +180,28 @@ async function capturePayment(req, res) {
 async function getOrdersByUserId(req, res) {
   try {
     const { userId } = req.params;
-    const orders = await OrderModel.find({ user: userId }).populate("user");
+    const { page, limit, sort } = req.query;
+
+    let filters = {};
+    if (sort === "newest") {
+      filters.orderDate = -1;
+    } else if (sort === "oldest") {
+      filters.orderDate = 1;
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const orders = await OrderModel.find({ user: userId })
+      .skip(skip)
+      .limit(limit)
+      .populate("user")
+      .sort(filters);
+
+    const countDocuments = await OrderModel.countDocuments({ user: userId });
     return res.status(200).json({
       success: true,
       message: "Orders fetched successfully",
       data: orders,
+      countDocuments,
     });
   } catch (error) {
     console.log("Error in getOrdersByUserId", error);

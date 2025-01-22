@@ -9,6 +9,6 @@ const router = express.Router();
 // prefix - /api/shop/order
 router.post("/create", createOrder);
 router.post("/capture-payment", capturePayment);
-router.get("/:userId", getOrdersByUserId);
+router.get("/:userId/get", getOrdersByUserId);
 
 module.exports = router;
