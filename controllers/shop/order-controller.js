@@ -2,6 +2,7 @@ require("dotenv").config();
 const paypal = require("../../helpers/paypal");
 const OrderModel = require("../../models/Order");
 const CartModel = require("../../models/Cart");
+const ProductModel = require("../../models/Product");
 const { get } = require("mongoose");
 
 const createOrder = async (req, res) => {
@@ -165,7 +166,23 @@ async function capturePayment(req, res) {
     const cartID = order.cart;
     await CartModel.findByIdAndDelete(cartID);
 
-    await await order.save();
+    await order.save();
+
+    // decrease the quantity of the products in the order
+    order.products.forEach(async (productInOrder) => {
+      const productID = productInOrder.productId;
+      const quantity = productInOrder.quantity;
+
+      const product = await ProductModel.findById(productID);
+      if (!product) {
+        console.log(
+          "Error in capturePayment: Product not found when try to decrease quantity"
+        );
+      } else {
+        product.totalStock = product.totalStock - quantity;
+        await product.save();
+      }
+    });
 
     return res.status(200).json({
       message: "Payment captured successfully",

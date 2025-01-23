@@ -17,7 +17,6 @@ async function fetchAllOrders(req, res) {
       .limit(limit)
       .sort(filters)
       .populate("user", "email userName");
-
     const countDocuments = await OrderModel.countDocuments();
     return res.status(200).json({
       success: true,
@@ -27,10 +26,39 @@ async function fetchAllOrders(req, res) {
     });
   } catch (error) {
     console.log("Error in fetchAllOrders", error);
-    res.status(500).json({ message: "Internal server error", succeess: false });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", succeess: false });
+  }
+}
+
+async function updateOrderStatus(req, res) {
+  try {
+    const { orderId } = req.params;
+    const { orderStatus } = req.body;
+
+    const order = await OrderModel.findById(orderId);
+    if (!order) {
+      return res
+        .status(404)
+        .json({ message: "Order not found", success: false });
+    }
+
+    order.orderStatus = orderStatus;
+    await order.save();
+
+    return res
+      .status(200)
+      .json({ message: "Order status updated", success: true });
+  } catch (error) {
+    console.log("Error in updateOrderStatus", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", success: false });
   }
 }
 
 module.exports = {
   fetchAllOrders,
+  updateOrderStatus,
 };
