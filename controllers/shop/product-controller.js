@@ -7,7 +7,14 @@ const getFilteredProducts = async (req, res) => {
     let sortCriteria = {};
     if (category) filters.category = { $in: category.split(",") };
     if (brand) filters.brand = { $in: brand.split(",") };
-    if (search) filters.title = { $regex: search, $options: "i" }; // case-insensitive search
+    if (search) {
+      filters.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ];
+    }
 
     // Determine sort criteria
     switch (sort) {
