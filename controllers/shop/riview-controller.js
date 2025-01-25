@@ -64,9 +64,20 @@ const createRiview = async (req, res) => {
       user: userId,
     });
     if (isUserAlreadyRiviewTheProduct) {
-      return res
-        .status(400)
-        .json({ success: false, message: "You already review this product" });
+      await RiviewModel.findOneAndUpdate(
+        {
+          product: productId,
+          user: userId,
+        },
+        {
+          rating,
+          comment,
+        }
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Riview updated successfully",
+      });
     }
 
     const newRiview = new RiviewModel({
@@ -142,7 +153,7 @@ const checkIsUserAlreadyRiviewed = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "User already review the product",
-        data: { isUserAlreadyRiviewed: true },
+        data: { isUserAlreadyRiviewed: true, riview: isUserAlreadyRiviewed },
       });
     }
 
