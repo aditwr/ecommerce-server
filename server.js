@@ -10,6 +10,7 @@ const accountRouter = require("./routes/account/account-routes");
 const addressRouter = require("./routes/account/address-routes");
 const shopOrderRouter = require("./routes/shop/order-routes");
 const adminOrderRouter = require("./routes/admin/order-routes");
+const riviewRouter = require("./routes/shop/riview-routes");
 const { authMiddleware } = require("./controllers/auth/auth-controller");
 require("dotenv").config();
 
@@ -45,6 +46,7 @@ app.use("/api/account", authMiddleware, accountRouter);
 app.use("/api/account/address", authMiddleware, addressRouter);
 app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/admin/order", adminOrderRouter);
+app.use("/api/shop/riview", authMiddleware, riviewRouter);
 
 app.listen(5000, () => {
   console.log("Server is running on port " + 5000);
