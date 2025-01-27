@@ -51,3 +51,5 @@ app.use("/api/shop/riview", authMiddleware, riviewRouter);
 app.listen(process.env.PORT, () => {
   console.log("Server is running...");
 });
+
+module.exports = app;
