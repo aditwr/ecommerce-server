@@ -25,7 +25,7 @@ const app = express();
 // const port = proccess.env.PORT || 3000;
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_BASE_URL,
   mehtods: "GET, POST, PUT, DELETE",
   allowedHeaders: "Content-Type, Authorization, Cache-Control, EXpires, Pragma",
   credentials: true,
@@ -48,6 +48,6 @@ app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/admin/order", adminOrderRouter);
 app.use("/api/shop/riview", authMiddleware, riviewRouter);
 
-app.listen(5000, () => {
-  console.log("Server is running on port " + 5000);
+app.listen(process.env.PORT, () => {
+  console.log("Server is running...");
 });

@@ -1,9 +1,7 @@
-require("dotenv").config();
 const paypal = require("../../helpers/paypal");
 const OrderModel = require("../../models/Order");
 const CartModel = require("../../models/Cart");
 const ProductModel = require("../../models/Product");
-const { get } = require("mongoose");
 
 const createOrder = async (req, res) => {
   try {
@@ -87,12 +85,8 @@ const createOrder = async (req, res) => {
       ],
       note_to_payer: "Contact us for any questions on your order.",
       redirect_urls: {
-        return_url: `${
-          process.env.CLIENT_BASE_URL || "http://localhost:5173"
-        }/shop/paypal-return`,
-        cancel_url: `${
-          process.env.CLIENT_BASE_URL || "http://localhost:5173"
-        }/shop/paypal-cancel`,
+        return_url: `${process.env.CLIENT_BASE_URL}/shop/paypal-return`,
+        cancel_url: `${process.env.CLIENT_BASE_URL}/shop/paypal-cancel`,
       },
     };
 
