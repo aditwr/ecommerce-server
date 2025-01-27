@@ -8,9 +8,9 @@ const {
 
 const router = express.Router();
 
+// prefix - /account/address
 router.post("/add/", createAddress);
 router.get("/get", getAddresses);
-// router.put("/update/:userId/:addressId", updateAddress);
 router.delete("/delete/:addressId", deleteAddress);
 
 module.exports = router;

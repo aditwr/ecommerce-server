@@ -171,4 +171,9 @@ const deleteAddress = async (req, res) => {
   }
 };
 
-module.exports = { createAddress, getAddresses, updateAddress, deleteAddress };
+module.exports = {
+  createAddress,
+  getAddresses,
+  updateAddress,
+  deleteAddress,
+};
