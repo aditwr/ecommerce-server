@@ -24,13 +24,13 @@ mongoose
 const app = express();
 // const port = proccess.env.PORT || 3000;
 
-const corsOptions = {
-  origin: process.env.CLIENT_BASE_URL,
-  mehtods: "GET, POST, PUT, DELETE",
-  allowedHeaders: "Content-Type, Authorization, Cache-Control, EXpires, Pragma",
-  credentials: true,
-};
-app.use(cors(corsOptions)); // to allow cross origin requests
+// const corsOptions = {
+//   origin: process.env.CLIENT_BASE_URL,
+//   mehtods: "GET, POST, PUT, DELETE",
+//   allowedHeaders: "Content-Type, Authorization, Cache-Control, EXpires, Pragma",
+//   credentials: true,
+// };
+// app.use(cors(corsOptions)); // to allow cross origin requests
 app.use(cookieParser()); // to parse cookies so that we can access them in the request object
 app.use(express.json()); // to parse json data in the request body
 app.use(express.urlencoded({ extended: true })); // to parse url encoded data in the request body
