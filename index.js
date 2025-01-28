@@ -38,6 +38,9 @@ app.use(express.urlencoded({ extended: true })); // to parse url encoded data in
 // middleware
 
 // routes
+app.get("/", (req, res) => {
+  res.send("The Ecommerce API is running....");
+});
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductRouter);
 app.use("/api/shop/products", shopProductRouter);
@@ -49,7 +52,7 @@ app.use("/api/admin/order", adminOrderRouter);
 app.use("/api/shop/riview", authMiddleware, riviewRouter);
 
 app.listen(process.env.PORT, () => {
-  console.log("Server is running...");
+  console.log(`Server is running on PORT ${process.env.PORT}`);
 });
 
 module.exports = app;
