@@ -37,8 +37,8 @@ const fetchRiviews = async (req, res) => {
 
 const createRiview = async (req, res) => {
   try {
-    const { productId, rating, comment } = req.body;
-    const userId = req.user.id;
+    const { productId, rating, comment, userId } = req.body;
+    // const userId = req.user.id;
     if (!productId || !userId || !rating || !comment) {
       return res.status(400).json({
         success: false,
@@ -100,8 +100,8 @@ const createRiview = async (req, res) => {
 
 const checkIsUserBroughtProduct = async (req, res) => {
   try {
-    const { productId } = req.body;
-    const userId = req.user.id;
+    const { productId, userId } = req.body;
+    // const userId = req.user.id;
     if (!productId || !userId) {
       return res.status(400).json({
         success: false,
@@ -135,8 +135,8 @@ const checkIsUserBroughtProduct = async (req, res) => {
 
 const checkIsUserAlreadyRiviewed = async (req, res) => {
   try {
-    const { productId } = req.body;
-    const userId = req.user.id;
+    const { productId, userId } = req.body;
+    // const userId = req.user.id;
     if (!productId || !userId) {
       return res.status(400).json({
         success: false,

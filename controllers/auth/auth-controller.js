@@ -87,15 +87,16 @@ const loginUser = async (req, res) => {
     );
 
     // add token cookie in server response, so that client's browser can store it in cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-    });
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: false,
+    // });
 
     // send final response {jwt token included in cookie server response}
     res.json({
       message: "User has been logged in successfully",
       success: true,
+      token,
       user: {
         id: checkUser._id,
         email: checkUser.email,
@@ -122,11 +123,27 @@ const logoutUser = (req, res) => {
 };
 
 // auth middleware
+// const authMiddleware = async (req, res, next) => {
+//   try {
+//     // check if token is present in cookie
+//     // get token from cookie on request
+//     const token = req.cookies.token;
+//     if (!token)
+//       return res.status(401).json({ message: "Unauthorized", success: false });
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     req.user = decoded;
+//     next();
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal Server Error", success: false });
+//   }
+// };
+
 const authMiddleware = async (req, res, next) => {
   try {
-    // check if token is present in cookie
-    // get token from cookie on request
-    const token = req.cookies.token;
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
     if (!token)
       return res.status(401).json({ message: "Unauthorized", success: false });
 

@@ -190,15 +190,11 @@ const removeProductFromCart = async (req, res) => {
         .status(404)
         .json({ message: "User shopping cart data not found", success: false });
 
-    console.log("before remove : ", cartOfSpesificUser);
-
     cartOfSpesificUser.products = cartOfSpesificUser.products.filter(
       (product) => product.productId != productId
     );
 
     await cartOfSpesificUser.save();
-
-    console.log("after remove : ", cartOfSpesificUser);
 
     res.status(200).json({
       success: true,

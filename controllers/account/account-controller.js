@@ -7,8 +7,8 @@ const DATA_ENCRYPTION_KEY = process.env.DATA_ENCRYPTION_KEY;
 
 const updateProfile = async (req, res) => {
   try {
-    const { userName, email, password } = req.body;
-    const userId = req.user.id;
+    const { userName, email, password, userId } = req.body;
+    // const userId = req.user.id;
 
     if (!userName || !email || !password) {
       return res.status(400).json({
@@ -74,8 +74,8 @@ const updateProfile = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const { newPassword, oldPassword } = req.body;
-    const userId = req.user.id;
+    const { newPassword, oldPassword, userId } = req.body;
+    // const userId = req.user.id;
 
     const decryptedOldPassword = CryptoJS.AES.decrypt(
       oldPassword,

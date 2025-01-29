@@ -4,6 +4,7 @@ const UserModel = require("../../models/User");
 const createAddress = async (req, res) => {
   try {
     const {
+      userId,
       address,
       city,
       postalCode,
@@ -11,7 +12,6 @@ const createAddress = async (req, res) => {
       phoneNumber,
       deliveryInstructions,
     } = req.body;
-    const userId = req.user.id;
 
     if (!address || !city || !postalCode || !country || !phoneNumber) {
       return res.status(400).json({
@@ -63,7 +63,7 @@ const createAddress = async (req, res) => {
 
 const getAddresses = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const { userId } = req.params;
 
     const userExists = await UserModel.findById(userId);
     if (!userExists) {
@@ -144,8 +144,7 @@ const updateAddress = async (req, res) => {
 
 const deleteAddress = async (req, res) => {
   try {
-    const { addressId } = req.params;
-    const userId = req.user.id;
+    const { addressId, userId } = req.params;
 
     //   check if the user is the owner of the address
     const addressOwnedByUser = await AddressModel.findOne({

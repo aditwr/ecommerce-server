@@ -10,7 +10,7 @@ const router = express.Router();
 
 // prefix - /account/address
 router.post("/add/", createAddress);
-router.get("/get", getAddresses);
-router.delete("/delete/:addressId", deleteAddress);
+router.get("/get/:userId", getAddresses);
+router.delete("/delete/:addressId/user/:userId", deleteAddress);
 
 module.exports = router;

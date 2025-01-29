@@ -45,11 +45,11 @@ app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductRouter);
 app.use("/api/shop/products", shopProductRouter);
 app.use("/api/shop/cart", cartRouter);
-app.use("/api/account", authMiddleware, accountRouter);
-app.use("/api/account/address", authMiddleware, addressRouter);
+app.use("/api/account", accountRouter);
+app.use("/api/account/address", addressRouter);
 app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/admin/order", adminOrderRouter);
-app.use("/api/shop/riview", authMiddleware, riviewRouter);
+app.use("/api/shop/riview", riviewRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on PORT ${process.env.PORT}`);
